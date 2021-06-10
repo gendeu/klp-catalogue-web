@@ -13,9 +13,22 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+        $image = $request->file('picture');
+
+        // $path = $image->getRealPath();
+        $filename = $image->getClientOriginalName();
+        $extension = $image->getClientOriginalExtension(); // Get the extension
+        // $image_name = $request->filename;
+
+        $path = $image->store('public/images/subcategory');
+        $filepath = str_replace("public/","storage/",$path);
+        // $image->storeAs('public/images/subcategory', $image_name);
+        
         $product = new Product([
             'name' => $request->input('name'),
-            'detail' => $request->input('detail')
+            'detail' => $request->input('detail'),
+            'file_name' => $filename,
+            'file_path' => $filepath,
         ]);
         $product->save();
 
@@ -30,6 +43,7 @@ class ProductController extends Controller
 
     public function update($id, Request $request)
     {
+        return $request;
         $product = Product::find($id);
         $product->update($request->all());
 
@@ -43,4 +57,5 @@ class ProductController extends Controller
 
         return response()->json('Product deleted!');
     }
+
 }

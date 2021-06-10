@@ -1906,6 +1906,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -1968,20 +1972,44 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      product: {}
+      product: {},
+      filename: '',
+      file: '',
+      success: '',
+      url: ''
     };
   },
   methods: {
+    onFileChange: function onFileChange(e) {
+      this.filename = e.target.files[0].name;
+      this.file = e.target.files[0];
+      this.url = URL.createObjectURL(this.file);
+    },
     addProduct: function addProduct() {
       var _this = this;
 
-      this.axios.post('http://localhost:8000/api/products', this.product).then(function (response) {
+      var formData = new FormData();
+      formData.append("picture", this.file);
+      formData.append("filename", this.filename);
+      formData.append("name", this.product.name);
+      formData.append("detail", this.product.detail);
+      this.axios.post('http://localhost:8000/api/products', formData).then(function (response) {
         return _this.$router.push({
           name: 'home'
-        });
+        }) // console.log(response.data)
+        ;
       })["catch"](function (err) {
         return console.log(err);
       })["finally"](function () {
@@ -2025,10 +2053,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      product: {}
+      product: {},
+      values: [],
+      url: '',
+      filename: ''
     };
   },
   created: function created() {
@@ -2036,16 +2076,25 @@ __webpack_require__.r(__webpack_exports__);
 
     this.axios.get("http://localhost:8000/api/products/".concat(this.$route.params.id)).then(function (res) {
       _this.product = res.data;
+      _this.filename = _this.product.file_name;
+      _this.url = '../' + _this.product.file_path;
     });
   },
   methods: {
+    onFileChange: function onFileChange(e) {
+      this.filename = e.target.files[0].name;
+      this.file = e.target.files[0];
+      this.url = URL.createObjectURL(this.file);
+    },
     updateProduct: function updateProduct() {
-      var _this2 = this;
-
+      var formData = new FormData();
+      formData.append("picture", this.file);
+      formData.append("filename", this.filename);
+      formData.append("name", this.product.name);
+      formData.append("detail", this.product.detail);
       this.axios.patch("http://localhost:8000/api/products/".concat(this.$route.params.id), this.product).then(function (res) {
-        _this2.$router.push({
-          name: 'home'
-        });
+        // this.$router.push({ name: 'home' });
+        console.log(res.data);
       });
     }
   }
@@ -38056,6 +38105,17 @@ var render = function() {
             _c("td", [_vm._v(_vm._s(product.detail))]),
             _vm._v(" "),
             _c("td", [
+              _c("img", {
+                staticStyle: { height: "100px", width: "200px" },
+                attrs: {
+                  src: product.file_path,
+                  alt: "Product image",
+                  srcset: ""
+                }
+              })
+            ]),
+            _vm._v(" "),
+            _c("td", [
               _c(
                 "div",
                 { staticClass: "btn-group", attrs: { role: "group" } },
@@ -38105,7 +38165,11 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Name")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Detail")])
+        _c("th", [_vm._v("Detail")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("File")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Actions")])
       ])
     ])
   }
@@ -38140,6 +38204,7 @@ var render = function() {
         _c(
           "form",
           {
+            attrs: { enctype: "multipart/form-data" },
             on: {
               submit: function($event) {
                 $event.preventDefault()
@@ -38200,10 +38265,44 @@ var render = function() {
               })
             ]),
             _vm._v(" "),
+            _c("div", { staticClass: "form-group" }, [
+              _c("div", { staticClass: "custom-file" }, [
+                _c("input", {
+                  staticClass: "custom-file-input",
+                  attrs: {
+                    type: "file",
+                    name: "filename",
+                    id: "inputFileUpload"
+                  },
+                  on: { change: _vm.onFileChange }
+                }),
+                _vm._v(" "),
+                _c(
+                  "label",
+                  {
+                    staticClass: "custom-file-label",
+                    attrs: { for: "inputFileUpload" }
+                  },
+                  [_vm._v("Choose file")]
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _vm.url
+              ? _c("img", {
+                  staticStyle: { width: "100px", height: "100px" },
+                  attrs: { src: _vm.url }
+                })
+              : _vm._e(),
+            _vm._v(" "),
+            _c("p", { staticClass: "text-success font-weight-bold" }, [
+              _vm._v(_vm._s(_vm.filename))
+            ]),
+            _vm._v(" "),
             _c(
               "button",
               { staticClass: "btn btn-primary", attrs: { type: "submit" } },
-              [_vm._v("Create")]
+              [_vm._v("Save")]
             )
           ]
         )
@@ -38300,6 +38399,40 @@ var render = function() {
                   }
                 }
               })
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-group" }, [
+              _c("div", { staticClass: "custom-file" }, [
+                _c("input", {
+                  staticClass: "custom-file-input",
+                  attrs: {
+                    type: "file",
+                    name: "filename",
+                    id: "editFileUpload"
+                  },
+                  on: { change: _vm.onFileChange }
+                }),
+                _vm._v(" "),
+                _c(
+                  "label",
+                  {
+                    staticClass: "custom-file-label",
+                    attrs: { for: "editFileUpload" }
+                  },
+                  [_vm._v("Choose file")]
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _vm.url
+              ? _c("img", {
+                  staticStyle: { width: "100px", height: "100px" },
+                  attrs: { src: _vm.url }
+                })
+              : _vm._e(),
+            _vm._v(" "),
+            _c("p", { staticClass: "text-success font-weight-bold" }, [
+              _vm._v(_vm._s(_vm.filename))
             ]),
             _vm._v(" "),
             _c(

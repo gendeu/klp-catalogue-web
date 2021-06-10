@@ -8,7 +8,8 @@
                 <th>ID</th>
                 <th>Name</th>
                 <th>Detail</th>
-                <!-- <th>Actions</th> -->
+                <th>File</th>
+                <th>Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -16,6 +17,9 @@
                 <td>{{ product.id }}</td>
                 <td>{{ product.name }}</td>
                 <td>{{ product.detail }}</td>
+                <td>
+                    <img :src="product.file_path" alt="Product image" srcset="" style="height: 100px; width: 200px;">
+                </td>
                 <td>
                     <div class="btn-group" role="group">
                         <router-link :to="{name: 'edit', params: { id: product.id }}" class="btn btn-success">Edit</router-link>
